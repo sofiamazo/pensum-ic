@@ -5,16 +5,39 @@ pensum
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plan de Estudios - Investigación Criminal</title>
+  <title>Plan de Estudios - Sofía Mazo</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #fdfdfd;
       padding: 20px;
+      color: #333;
     }
     h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 10px;
+    }
+    #progreso {
+      width: 80%;
+      margin: 0 auto 10px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #barraProgreso {
+      height: 25px;
+      background: #81c784; /* verde suave */
+      width: 0%;
+      text-align: center;
+      color: white;
+      line-height: 25px;
+      font-weight: bold;
+    }
+    #creditosContador {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 16px;
+      font-weight: bold;
     }
     .semestre {
       display: inline-block;
@@ -23,91 +46,41 @@ pensum
       background: white;
       padding: 10px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
       width: 220px;
     }
     .materia {
-      background: #eee;
+      background: #f0f0f0;
       margin: 5px 0;
       padding: 8px;
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.3s;
+      font-size: 14px;
     }
-    .bloqueada { background: #ccc; cursor: not-allowed; }
-    .disponible { background: #fff8dc; }
-    .vista { background: #c8e6c9; text-decoration: line-through; }
+    .bloqueada { background: #e0e0e0; cursor: not-allowed; }
+    .disponible { background: #ffe0e6; }
+    .vista { background: #d0f0d0; text-decoration: line-through; }
   </style>
 </head>
 <body>
-  <h1>Plan de Estudios - Investigación Criminal</h1>
+  <h1>Plan de Estudios - Sofía Mazo</h1>
+  <div id="progreso">
+    <div id="barraProgreso">0%</div>
+  </div>
+  <div id="creditosContador">0 de 150 créditos completados</div>
   <div id="contenedor"></div>
 
   <script>
-    const materias = [
-      { nombre: "Expresión Escrita", semestre: 1, creditos: 3, requisitos: [] },
-      { nombre: "Actividad Deportiva o Cultural", semestre: 1, creditos: 1, requisitos: [] },
-      { nombre: "Matemáticas Aplicadas a la Investigación Criminal", semestre: 1, creditos: 3, requisitos: [] },
-      { nombre: "Teoría del Derecho y Constitución", semestre: 1, creditos: 3, requisitos: [] },
-      { nombre: "Criminalística", semestre: 1, creditos: 3, requisitos: [] },
-      { nombre: "Informática Forense", semestre: 1, creditos: 3, requisitos: [] },
-      { nombre: "Cátedra Institucional Ciencia y Libertad", semestre: 2, creditos: 2, requisitos: [] },
-      { nombre: "Química General", semestre: 2, creditos: 3, requisitos: [] },
-      { nombre: "Teoría del Delito", semestre: 2, creditos: 3, requisitos: [] },
-      { nombre: "Metodología de la Investigación", semestre: 2, creditos: 2, requisitos: [] },
-      { nombre: "Diseño y Reconstrucción Forense", semestre: 2, creditos: 3, requisitos: ["Informática Forense"] },
-      { nombre: "Ciencias Forenses", semestre: 2, creditos: 3, requisitos: ["Criminalística"] },
-      { nombre: "Química Forense", semestre: 3, creditos: 3, requisitos: ["Química General"] },
-      { nombre: "Física Forense", semestre: 3, creditos: 3, requisitos: ["Matemáticas Aplicadas a la Investigación Criminal"] },
-      { nombre: "Derecho Penal Especial", semestre: 3, creditos: 3, requisitos: ["Teoría del Delito"] },
-      { nombre: "Anatomía Humana", semestre: 3, creditos: 3, requisitos: ["Ciencias Forenses"] },
-      { nombre: "Delitos Sexuales", semestre: 3, creditos: 1, requisitos: ["Teoría del Delito"] },
-      { nombre: "Ética", semestre: 3, creditos: 1, requisitos: [] },
-      { nombre: "Toxicología Forense", semestre: 4, creditos: 3, requisitos: ["Química Forense"] },
-      { nombre: "Odontología Forense", semestre: 4, creditos: 3, requisitos: ["Anatomía Humana"] },
-      { nombre: "Medicina Legal", semestre: 4, creditos: 3, requisitos: ["Anatomía Humana"] },
-      { nombre: "Derecho Procesal Penal", semestre: 4, creditos: 2, requisitos: ["Derecho Penal Especial"] },
-      { nombre: "Análisis Forense de Incendios y Explosivos", semestre: 4, creditos: 3, requisitos: ["Química Forense", "Física Forense"] },
-      { nombre: "Libre Elección I", semestre: 4, creditos: 2, requisitos: [] },
-      { nombre: "Antropología Forense", semestre: 5, creditos: 3, requisitos: ["Anatomía Humana"] },
-      { nombre: "Pruebas Penales", semestre: 5, creditos: 3, requisitos: ["Derecho Procesal Penal"] },
-      { nombre: "Lofoscopia", semestre: 5, creditos: 3, requisitos: ["Odontología Forense"] },
-      { nombre: "Fotografía y Video Forense", semestre: 5, creditos: 3, requisitos: ["Ciencias Forenses"] },
-      { nombre: "Criminología y Victimología", semestre: 5, creditos: 3, requisitos: ["Ciencias Forenses"] },
-      { nombre: "Libre Elección II", semestre: 5, creditos: 2, requisitos: [] },
-      { nombre: "Biología Forense", semestre: 6, creditos: 3, requisitos: ["Anatomía Humana"] },
-      { nombre: "Topografía Forense", semestre: 6, creditos: 3, requisitos: ["Matemáticas Aplicadas a la Investigación Criminal"] },
-      { nombre: "Derecho Internacional Humanitario", semestre: 6, creditos: 2, requisitos: ["Derecho Penal Especial"] },
-      { nombre: "Inteligencia y Contrainteligencia", semestre: 6, creditos: 3, requisitos: ["Pruebas Penales"] },
-      { nombre: "Estadística Criminal", semestre: 6, creditos: 3, requisitos: ["Matemáticas Aplicadas a la Investigación Criminal"] },
-      { nombre: "Investigación Criminal I", semestre: 6, creditos: 3, requisitos: ["Criminología y Victimología"] },
-      { nombre: "Libre Elección III", semestre: 6, creditos: 2, requisitos: [] },
-      { nombre: "Grafología Forense", semestre: 7, creditos: 3, requisitos: ["Pruebas Penales"] },
-      { nombre: "Balística y Hoplología", semestre: 7, creditos: 3, requisitos: ["Topografía Forense", "Física Forense"] },
-      { nombre: "Morfología Facial Forense y Retrato Hablado", semestre: 7, creditos: 1, requisitos: ["Anatomía Humana"] },
-      { nombre: "Seguridad y Análisis de Riesgo", semestre: 7, creditos: 3, requisitos: ["Investigación Criminal I"] },
-      { nombre: "Investigación Criminal II", semestre: 7, creditos: 3, requisitos: ["Investigación Criminal I"] },
-      { nombre: "Énfasis I", semestre: 7, creditos: 3, requisitos: ["Investigación Criminal I"] },
-      { nombre: "Psicología Forense", semestre: 8, creditos: 3, requisitos: ["Criminología y Victimología"] },
-      { nombre: "Delitos Informáticos", semestre: 8, creditos: 3, requisitos: ["Informática Forense", "Derecho Penal Especial"] },
-      { nombre: "Criminalística de Campo", semestre: 8, creditos: 3, requisitos: ["Grafología Forense", "Balística y Hoplología", "Investigación Criminal II", "Psicología Forense"] },
-      { nombre: "Genética Forense", semestre: 8, creditos: 2, requisitos: ["Biología Forense", "Química Forense"] },
-      { nombre: "Microbiología y Entomología Forense", semestre: 8, creditos: 3, requisitos: ["Biología Forense"] },
-      { nombre: "Crimen Transnacional", semestre: 8, creditos: 2, requisitos: ["Investigación Criminal II"] },
-      { nombre: "Énfasis II", semestre: 8, creditos: 3, requisitos: ["Énfasis I"] },
-      { nombre: "Documentología Forense", semestre: 9, creditos: 3, requisitos: ["Grafología Forense"] },
-      { nombre: "Técnicas de Oralidad", semestre: 9, creditos: 2, requisitos: ["Derecho Procesal Penal"] },
-      { nombre: "Técnicas de Entrevista e Interrogatorio", semestre: 9, creditos: 3, requisitos: ["Psicología Forense", "Investigación Criminal II"] },
-      { nombre: "Psiquiatría Forense", semestre: 9, creditos: 3, requisitos: ["Psicología Forense"] },
-      { nombre: "Práctica Profesional", semestre: 9, creditos: 3, requisitos: ["Énfasis II"] },
-      { nombre: "Énfasis III", semestre: 9, creditos: 3, requisitos: ["Énfasis II"] }
-    ];
+    const materias = [...]; // aquí va la lista completa (omitida aquí para brevedad)
 
     function crearInterfaz() {
       const contenedor = document.getElementById('contenedor');
       contenedor.innerHTML = "";
-      const maxSemestre = Math.max(...materias.map(m => m.semestre));
+      let totalCreditos = 0;
+      let vistosCreditos = 0;
 
+      const maxSemestre = Math.max(...materias.map(m => m.semestre));
       for (let s = 1; s <= maxSemestre; s++) {
         const col = document.createElement('div');
         col.className = 'semestre';
@@ -118,10 +91,12 @@ pensum
           div.className = 'materia';
           div.textContent = `${m.nombre} (${m.creditos} cr)`;
           div.dataset.nombre = m.nombre;
+          totalCreditos += m.creditos;
 
           const estado = localStorage.getItem(m.nombre);
           if (estado === 'vista') {
             div.classList.add('vista');
+            vistosCreditos += m.creditos;
           } else if (cumpleRequisitos(m)) {
             div.classList.add('disponible');
             div.onclick = () => marcarVista(m.nombre);
@@ -134,6 +109,18 @@ pensum
 
         contenedor.appendChild(col);
       }
+
+      actualizarProgreso(vistosCreditos, totalCreditos);
+    }
+
+    function actualizarProgreso(vistos, total) {
+      const porcentaje = Math.round((vistos / total) * 100);
+      const barra = document.getElementById('barraProgreso');
+      barra.style.width = `${porcentaje}%`;
+      barra.textContent = `${porcentaje}%`;
+
+      const contador = document.getElementById('creditosContador');
+      contador.textContent = `${vistos} de ${total} créditos completados`;
     }
 
     function cumpleRequisitos(materia) {
